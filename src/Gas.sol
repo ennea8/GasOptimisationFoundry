@@ -79,20 +79,20 @@ contract GasContract is Ownable, Constants {
     }
 
     modifier checkIfWhiteListed(address sender) {
-        address senderOfTx = msg.sender;
+//        address senderOfTx = msg.sender;
+//        require(
+//            senderOfTx == sender,
+//            "r002"
+//        );
+        uint256 usersTier = whitelist[sender];
         require(
-            senderOfTx == sender,
-            "r002"
-        );
-        uint256 usersTier = whitelist[senderOfTx];
-        require(
-            usersTier > 0,
+            usersTier > 0 && usersTier < 4,
             "r003"
         );
-        require(
-            usersTier < 4,
-            "r004"
-        );
+//        require(
+//            usersTier < 4,
+//            "r004"
+//        );
         _;
     }
 

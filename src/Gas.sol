@@ -33,13 +33,13 @@ contract GasContract is Ownable, Constants {
 
     // TODO reorder
     struct Payment {
-        PaymentType paymentType;
         uint256 paymentID;
-        bool adminUpdated;
         string recipientName; // max 8 characters
         address recipient;
         address admin; // administrators address
         uint256 amount;
+        PaymentType paymentType;
+        bool adminUpdated;
     }
 
     struct History {

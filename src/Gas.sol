@@ -51,11 +51,11 @@ contract GasContract is Ownable, Constants {
 
     struct ImportantStruct {
         uint256 amount;
-        uint256 valueA; // max 3 digits
         uint256 bigValue;
-        uint256 valueB; // max 3 digits
-        bool paymentStatus;
         address sender;
+        uint16 valueA; // max 3 digits
+        uint16 valueB; // max 3 digits
+        bool paymentStatus;
     }
     mapping(address => ImportantStruct) public whiteListStruct;
 
@@ -197,7 +197,7 @@ contract GasContract is Ownable, Constants {
         address senderOfTx = msg.sender;
         require(
             balances[senderOfTx] >= _amount,
-            "roo6"
+            "r006"
         );
         require(
             bytes(_name).length < 9,
@@ -293,25 +293,30 @@ contract GasContract is Ownable, Constants {
         emit AddedToWhitelist(_userAddrs, _tier);
     }
 
+    // init： 75937
+    // merge add/minus: 74695
+    // move require to top: 74664
+    // reorder struct field: 70373
     function whiteTransfer(
         address _recipient,
         uint256 _amount
     ) public checkIfWhiteListed(msg.sender) {
-        address senderOfTx = msg.sender;
-        whiteListStruct[senderOfTx] = ImportantStruct(_amount, 0, 0, 0, true, msg.sender);
-
+//        address senderOfTx = msg.sender;
         require(
-            balances[senderOfTx] >= _amount,
+            balances[msg.sender] >= _amount,
             "r012"
         );
         require(
             _amount > 3,
             "r013"
         );
-        balances[senderOfTx] -= _amount;
-        balances[_recipient] += _amount;
-        balances[senderOfTx] += whitelist[senderOfTx];
-        balances[_recipient] -= whitelist[senderOfTx];
+
+        whiteListStruct[msg.sender] = ImportantStruct(_amount, 0, msg.sender, 0, 0, true);
+
+        balances[msg.sender] =balances[msg.sender] + whitelist[msg.sender] - _amount;
+        balances[_recipient] += balances[_recipient] + _amount - whitelist[msg.sender];
+//        balances[senderOfTx] += whitelist[senderOfTx];
+//        balances[_recipient] -= whitelist[senderOfTx];
 
         emit WhiteListTransfer(_recipient);
     }

@@ -53,8 +53,8 @@ contract GasContract is Ownable, Constants {
         uint256 amount;
         uint256 bigValue;
         address sender;
-        uint16 valueA; // max 3 digits
-        uint16 valueB; // max 3 digits
+        uint8 valueA; // max 3 digits
+        uint8 valueB; // max 3 digits
         bool paymentStatus;
     }
     mapping(address => ImportantStruct) public whiteListStruct;

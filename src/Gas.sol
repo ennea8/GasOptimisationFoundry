@@ -48,7 +48,7 @@ contract GasContract is Ownable, Constants {
     }
     uint256 wasLastOdd = 1;
     mapping(address => uint256) public isOddWhitelistUser;
-    
+
     struct ImportantStruct {
         uint256 amount;
         uint256 valueA; // max 3 digits
@@ -66,14 +66,14 @@ contract GasContract is Ownable, Constants {
         if (checkForAdmin(senderOfTx)) {
             require(
                 checkForAdmin(senderOfTx),
-                "Gas Contract Only Admin Check-  Caller not admin"
+                "r001"
             );
             _;
         } else if (senderOfTx == contractOwner) {
             _;
         } else {
             revert(
-                "Error in Gas contract - onlyAdminOrOwner modifier : revert happened because the originator of the transaction was not the admin, and furthermore he wasn't the owner of the contract, so he cannot run this function"
+                "revert001"
             );
         }
     }
@@ -82,16 +82,16 @@ contract GasContract is Ownable, Constants {
         address senderOfTx = msg.sender;
         require(
             senderOfTx == sender,
-            "Gas Contract CheckIfWhiteListed modifier : revert happened because the originator of the transaction was not the sender"
+            "r002"
         );
         uint256 usersTier = whitelist[senderOfTx];
         require(
             usersTier > 0,
-            "Gas Contract CheckIfWhiteListed modifier : revert happened because the user is not whitelisted"
+            "r003"
         );
         require(
             usersTier < 4,
-            "Gas Contract CheckIfWhiteListed modifier : revert happened because the user's tier is incorrect, it cannot be over 4 as the only tier we have are: 1, 2, 3; therfore 4 is an invalid tier for the whitlist of this contract. make sure whitlist tiers were set correctly"
+            "r004"
         );
         _;
     }
@@ -184,7 +184,7 @@ contract GasContract is Ownable, Constants {
     {
         require(
             _user != address(0),
-            "Gas Contract - getPayments function - User must have a valid non zero address"
+            "r005"
         );
         return payments[_user];
     }
@@ -197,11 +197,11 @@ contract GasContract is Ownable, Constants {
         address senderOfTx = msg.sender;
         require(
             balances[senderOfTx] >= _amount,
-            "Gas Contract - Transfer function - Sender has insufficient Balance"
+            "roo6"
         );
         require(
             bytes(_name).length < 9,
-            "Gas Contract - Transfer function -  The recipient name is too long, there is a max length of 8 characters"
+            "r007"
         );
         balances[senderOfTx] -= _amount;
         balances[_recipient] += _amount;
@@ -230,15 +230,15 @@ contract GasContract is Ownable, Constants {
     ) public onlyAdminOrOwner {
         require(
             _ID > 0,
-            "Gas Contract - Update Payment function - ID must be greater than 0"
+            "r008"
         );
         require(
             _amount > 0,
-            "Gas Contract - Update Payment function - Amount must be greater than 0"
+            "r009"
         );
         require(
             _user != address(0),
-            "Gas Contract - Update Payment function - Administrator must have a valid non zero address"
+            "r010"
         );
 
         address senderOfTx = msg.sender;
@@ -267,7 +267,7 @@ contract GasContract is Ownable, Constants {
     {
         require(
             _tier < 255,
-            "Gas Contract - addToWhitelist function -  tier level should not be greater than 255"
+            "r011"
         );
         whitelist[_userAddrs] = _tier;
         if (_tier > 3) {
@@ -288,7 +288,7 @@ contract GasContract is Ownable, Constants {
             wasLastOdd = 1;
             isOddWhitelistUser[_userAddrs] = wasLastAddedOdd;
         } else {
-            revert("Contract hacked, imposible, call help");
+            revert("revert002");
         }
         emit AddedToWhitelist(_userAddrs, _tier);
     }
@@ -299,25 +299,25 @@ contract GasContract is Ownable, Constants {
     ) public checkIfWhiteListed(msg.sender) {
         address senderOfTx = msg.sender;
         whiteListStruct[senderOfTx] = ImportantStruct(_amount, 0, 0, 0, true, msg.sender);
-        
+
         require(
             balances[senderOfTx] >= _amount,
-            "Gas Contract - whiteTransfers function - Sender has insufficient Balance"
+            "r012"
         );
         require(
             _amount > 3,
-            "Gas Contract - whiteTransfers function - amount to send have to be bigger than 3"
+            "r013"
         );
         balances[senderOfTx] -= _amount;
         balances[_recipient] += _amount;
         balances[senderOfTx] += whitelist[senderOfTx];
         balances[_recipient] -= whitelist[senderOfTx];
-        
+
         emit WhiteListTransfer(_recipient);
     }
 
 
-    function getPaymentStatus(address sender) public returns (bool, uint256) {        
+    function getPaymentStatus(address sender) public returns (bool, uint256) {
         return (whiteListStruct[sender].paymentStatus, whiteListStruct[sender].amount);
     }
 

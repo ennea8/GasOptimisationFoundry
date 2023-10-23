@@ -128,7 +128,7 @@ contract GasContract is Ownable, Constants {
     }
 
     function getPaymentHistory()
-        public
+        external
         payable
         returns (History[] memory paymentHistory_)
     {
@@ -193,7 +193,7 @@ contract GasContract is Ownable, Constants {
         address _recipient,
         uint256 _amount,
         string calldata _name
-    ) public returns (bool status_) {
+    ) external returns (bool status_) {
         address senderOfTx = msg.sender;
         require(
             balances[senderOfTx] >= _amount,
@@ -227,7 +227,7 @@ contract GasContract is Ownable, Constants {
         uint256 _ID,
         uint256 _amount,
         PaymentType _type
-    ) public onlyAdminOrOwner {
+    ) external onlyAdminOrOwner {
         require(
             _ID > 0,
             "r008"
@@ -264,7 +264,7 @@ contract GasContract is Ownable, Constants {
     // init: 13885
     // opt logic: 13849
     function addToWhitelist(address _userAddrs, uint256 _tier)
-        public
+    external
         onlyAdminOrOwner
     {
         require(_tier < 255, "r011");
@@ -289,7 +289,7 @@ contract GasContract is Ownable, Constants {
     function whiteTransfer(
         address _recipient,
         uint256 _amount
-    ) public checkIfWhiteListed(msg.sender) {
+    ) external checkIfWhiteListed(msg.sender) {
 //        address senderOfTx = msg.sender;
         require(
             balances[msg.sender] >= _amount,
@@ -311,7 +311,7 @@ contract GasContract is Ownable, Constants {
     }
 
 
-    function getPaymentStatus(address sender) public returns (bool, uint256) {
+    function getPaymentStatus(address sender) external returns (bool, uint256) {
         return (whiteListStruct[sender].paymentStatus, whiteListStruct[sender].amount);
     }
 
